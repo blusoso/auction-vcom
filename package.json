@@ -8,8 +8,18 @@
     "start": "next start"
   },
   "dependencies": {
+    "axios": "^0.20.0",
+    "firebase": "^7.23.0",
+    "firebase-admin": "^9.2.0",
+    "js-cookie": "^2.2.1",
+    "jwt-decode": "^3.0.0",
     "next": "9.5.3",
     "react": "16.13.1",
-    "react-dom": "16.13.1"
-  }
+    "react-dom": "16.13.1",
+    "react-hook-form": "^6.9.2",
+    "styled-jsx": "^3.3.0"
+  },
+  "main": "index.js",
+  "author": "fahstjlps <fahstjlps@gmail.com>",
+  "license": "MIT"
 }
