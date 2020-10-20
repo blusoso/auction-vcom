@@ -16,7 +16,7 @@ module.exports = (req, res, next) => {
         .then((decodedToken) => {
             req.user = decodedToken;
             let phoneNumberFormat;
-            if (req.user.phone_number.charAt(0) == "+") {
+            if (req.user.phone_number.charAt(0) === "+") {
                 const slicePhoneNumber = req.user.phone_number.substring(3);
                 phoneNumberFormat = "0" + slicePhoneNumber;
             }

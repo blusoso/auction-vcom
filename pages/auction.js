@@ -1,8 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
-import jwtDecode from "jwt-decode";
 import NavGlobal from "@/components/NavGlobal";
 import { useRouter } from "next/router";
-import firebase from "../config/firebase-config";
 import { UserContext } from "../store/UserProvider";
 
 

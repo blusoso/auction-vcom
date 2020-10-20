@@ -4,35 +4,49 @@ const firebase = require("firebase");
 
 firebase.initializeApp(firebaseConfig);
 
-exports.getUsers = (req, res) => {
-    db.collection("users")
-        .orderBy("created_at", "desc")
-        .get()
-        .then((data) => {
-            let users = [];
-            data.forEach((user) => {
-                users.push({
-                    id: user.id,
-                    first_name: user.data().first_name,
-                    last_name: user.data().last_name,
-                    phone_number: user.data().phone_number,
-                    id_card: user.data().id_card,
-                    email: user.data().email,
-                    password: user.data().password,
-                    is_consent_policy: user.data().is_consent_policy,
-                    created_at: user.data().created_at,
-                });
-            });
+exports.getUsers = async (req, res) => {
+    // db.collection("users")
+    //     .orderBy("created_at", "desc")
+    //     .get()
+    //     .then((data) => {
+    //         let users = [];
+    //         data.forEach((user) => {
+    //             users.push({
+    //                 id: user.id,
+    //                 first_name: user.data().first_name,
+    //                 last_name: user.data().last_name,
+    //                 phone_number: user.data().phone_number,
+    //                 id_card: user.data().id_card,
+    //                 email: user.data().email,
+    //                 password: user.data().password,
+    //                 is_consent_policy: user.data().is_consent_policy,
+    //                 created_at: user.data().created_at,
+    //             });
+    //         });
 
-            return res.json(users);
-        })
-        .catch((err) => console.error(err));
+    //         return res.json(users);
+    //     })
+    //     .catch((err) => console.error(err));
+    // const { uid } = firebase.auth().currentUser;
+
+    // if (uid) {
+    //     const users = await db.doc(`/users/${uid}`).orderBy("created_at", "desc").get();
+
+    //     return res.json(
+    //         users.docs.map((doc) => {
+    //             return { id: doc.id, ...doc.data() };
+    //         })
+    //     );
+    // }
+
+    // return res.status(400).json({ message: 'This user not found!' });
 };
 
 exports.signup = (req, res) => {
     let token, userId;
 
     const newUser = {
+        uid: req.body.uid,
         first_name: req.body.first_name,
         last_name: req.body.last_name,
         phone_number: req.body.phone_number,
@@ -46,14 +60,13 @@ exports.signup = (req, res) => {
 
     // TODO: Validation
 
-    db.collection("users")
-        .doc()
+    db.doc(`/users/${newUser.uid}`)
         .get()
         .then((user) => {
             if (user.exists) {
                 return res.status(400).json({ message: "This phone number is already taken" });
             } else {
-                db.collection("users").add(newUser);
+                db.doc(`/users/${newUser.uid}`).set(newUser);
                 return res.status(201).json({ message: "Sign up success" });
             }
         });
@@ -101,38 +114,15 @@ exports.signup = (req, res) => {
     //     });
 };
 
-exports.phoneNumberLogin = (req, res) => {
-    // const user = {
-    //     email: req.body.email,
-    //     password: req.body.password,
-    // };
-    // // TODO: Validation
-    // firebase
-    //     .auth()
-    //     .signInWithEmailAndPassword(user.email, user.password)
-    //     .then((data) => {
-    //         return data.user.getIdToken();
-    //     })
-    //     .then((token) => {
-    //         return res.json({ token });
-    //     })
-    //     .catch((err) => {
-    //         console.log(err);
-    //         return res.status(500).json({ error: err.code });
-    //     });
-    // const data = {
-    //     phone_number: req.body.phone_number,
-    //     recaptcha_verifier: req.body.recaptcha_verifier
-    // };
-    // firebase
-    //     .auth()
-    //     .signInWithPhoneNumber(data.phone_number, data.recaptcha_verifier)
-    //     .then((confirmationResult) => {
-    //         return res.status(201).json({ confirmationResult });;
-    //         // window.confirmationResult = confirmationResult;
-    //         // console.log(confirmationResult);
-    //     })
-    //     .catch((err) => {
-    //         console.log(err);
-    //     });
+exports.signout = (req, res) => {
+    firebase
+        .auth()
+        .signOut()
+        .then(() => {
+            return res.status(201).json({ message: "Sign-out successful." });
+        })
+        .catch((err) => {
+            console.log(err);
+            return res.status(500).json({ error: err.code });
+        });
 };
